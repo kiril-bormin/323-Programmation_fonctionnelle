@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DataSeries
 {
-    internal class DataPoint<T>
+    public class DataPoint<T>
     {
         public DateTime Timestamp { get; }
         public T Value { get; }
