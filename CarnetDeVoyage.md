@@ -55,7 +55,7 @@ Je tiens à ce que le codage ne commence qu'à partir du moment où au moins une
 
 N'ayant reçu aucune livraison pour l'instant (mardi), j'en déduis que tout le monde a encore du travail à fournir pour arriver à ce stade.
 
-### Mercredi (plan)
+### Mercredi
 
 On a fait le checkpoint #1. Les résultats sont ... moyens. En même temps, très peu étaient ceux qui avaient révisé.
 
