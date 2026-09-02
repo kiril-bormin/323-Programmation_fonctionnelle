@@ -14,11 +14,24 @@ Console.WriteLine($"Il y a  {valorant.Count} matches dans la série Valorant"); 
 Console.WriteLine($"Il y a  {cs2.Count} matches dans la série CS2"); // 3
 Console.WriteLine($"Il y a  {lol.Count} matches dans la série LoL"); // 3
 
+var biggame = valorant.Values
+    .Where(vm => vm.Value.Player == "Léa")
+    .Where(vm => vm.Value.Kills >= 20)
+    .Where(vm => vm.Value.Assists >= 5)
+    .OrderBy(vm => vm.Timestamp)
+    .Last();
+Console.WriteLine(biggame.Timestamp.ToString("dd/MM/yyyy") + " : " + biggame.Value.Player + " a fait un gros match avec " + biggame.Value.Kills + " kills et " + biggame.Value.Assists + " assists.");
+
+ValorantMatch dylanthird = valorant.Values
+    .Where(ValorantMatch => ValorantMatch.Value.Player == "Dylan")
+    .ElementAt(3)
+    .Value;
+Console.WriteLine("Dans son 4ème match, Dylan a fait" + dylanthird.Kills + " kills.");
 Console.ReadKey();
 
 DataPoint<ValorantMatch> ParseValorant(string[] cols)
 {
-    ValorantMatch match = new ValorantMatch(cols[1], cols[2], int.Parse(cols[3]), int.Parse(cols[4]), int.Parse(cols[5]), int.Parse(cols[6]), int.Parse(cols[7]), cols[8] == "TRUE");
+    ValorantMatch match = new ValorantMatch(cols[1], cols[2], int.Parse(cols[3]), int.Parse(cols[4]), int.Parse(cols[5]), int.Parse(cols[6]), int.Parse(cols[7]), cols[8] == "VRAI");
     DateTime date = DateTime.Parse(cols[0]);
     return new DataPoint<ValorantMatch>(date,match);
 }
