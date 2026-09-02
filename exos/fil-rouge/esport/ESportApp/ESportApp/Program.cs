@@ -26,7 +26,7 @@ ValorantMatch dylanthird = valorant.Values
     .Where(ValorantMatch => ValorantMatch.Value.Player == "Dylan")
     .ElementAt(3)
     .Value;
-Console.WriteLine("Dans son 4ème match, Dylan a fait" + dylanthird.Kills + " kills.");
+Console.WriteLine("Dans son 4ème match, Dylan a fait " + dylanthird.Kills + " kills.");
 Console.ReadKey();
 
 DataPoint<ValorantMatch> ParseValorant(string[] cols)
