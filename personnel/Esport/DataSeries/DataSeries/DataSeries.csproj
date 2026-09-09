@@ -6,4 +6,27 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="data\cs2.csv" />
+    <None Remove="data\lol.csv" />
+    <None Remove="data\roster.csv" />
+    <None Remove="data\valorant.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="data\cs2.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\roster.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="data\valorant.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="data\lol.csv" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,7 @@
 ﻿using DataSeries;
 using EsportApp;
+using System.Runtime.Intrinsics.Arm;
+using System.Linq;
 
 public class Program()
 {
@@ -7,14 +9,17 @@ public class Program()
     {
 
         DataSeries<DataPoint<ValorantMatch>> valorantMatches;
-        DataSeries<DataPoint<LolMatch>> lolMatches; 
+        DataSeries<DataPoint<LolMatch>> lolMatches;
         DataSeries<DataPoint<Cs2Match>> cs2Matches;
 
-        var valorant = DataSeries<ValorantMatch>.FromCsv("C:\\Users\\px20umf\\Documents\\github\\323-Programmation_fonctionnelle\\personnel\\Esport\\DataSeries\\DataSeries\\data\\valorant.csv", ParseValorant);
+        var valorant = DataSeries<ValorantMatch>.FromCsv(@"data\valorant.csv", ParseValorant);
         var lol = DataSeries<LolMatch>.FromCsv("C:\\Users\\px20umf\\Documents\\github\\323-Programmation_fonctionnelle\\personnel\\Esport\\DataSeries\\DataSeries\\data\\lol.csv", ParseLol);
-        var cs2 = DataSeries<Cs2Match>.FromCsv("C:\\Users\\px20umf\\Documents\\github\\323-Programmation_fonctionnelle\\personnel\\Esport\\DataSeries\\DataSeries\\data\\cs2.csv", ParseCs2);
+        var cs2 = DataSeries<Cs2Match>.FromCsv(@"data\cs2.csv", ParseCs2);
 
         var raphGenerated = MatchGenerator.GenerateCs2("Raphaël", 20);
+        var noeGenerated = MatchGenerator.GenerateCs2("Noé", 20);
+        var kiaraGenerated = MatchGenerator.GenerateCs2("Kiara", 20);
+
 
         Console.WriteLine($"Raphaël : {raphGenerated.Values.Count()}");
 
@@ -22,18 +27,22 @@ public class Program()
             m.Kills + m.Assists <= 50 &&
             m.Deaths >= 1;
 
-        var raphaelValid = raphGenerated.Values.Where(isValid).ToList();
+        var raphaelValid = DataSeries<Cs2Match>.From(
+            raphGenerated.DataPoints.Where(dp => isValid(dp.Value))
+        );
 
-        Console.WriteLine($"Avant : {raphGenerated.Values.Count()}, après : {raphaelValid.Count}");
-
+        Console.WriteLine($"Avant : {raphGenerated.Values.Count()}, après : {raphaelValid.Values.Count()}");
 
         Console.WriteLine($"Valorant : {valorant.Values.Count()}");
         Console.WriteLine($"League of Legends : {lol.Values.Count()}");
         Console.WriteLine($"CS2 : {cs2.Values.Count()}");
 
+        ExportCs2(raphaelValid, "raphael_generated.csv");
+        ExportCs2(noeGenerated, "noé_generated.csv");
+        ExportCs2(kiaraGenerated, "kiara_generated.csv");
 
+        Console.WriteLine(Path.GetFullPath("raphael_generated.csv"));
     }
-
     static ValorantMatch ParseValorant(string[] cols) => new ValorantMatch(
         cols[1],              // player
         cols[2],              // agent
@@ -66,4 +75,14 @@ public class Program()
         int.Parse(cols[8]),   // visionScore
         bool.Parse(cols[9])   // won
     );
+
+    static void ExportCs2(DataSeries<Cs2Match> matches, string path)
+    {
+        var header = "date,player,map,start_side,kills,deaths,assists,mvps,won";
+        var lines = matches.DataPoints.Select(dp =>
+            $"{dp.Timestamp:yyyy-MM-dd},{dp.Value.Player},{dp.Value.Map},{dp.Value.StartSide}," +
+            $"{dp.Value.Kills},{dp.Value.Deaths},{dp.Value.Assists},{dp.Value.Mvps},{dp.Value.Won.ToString().ToLower()}"
+        );
+        File.WriteAllLines(path, lines.Prepend(header));
+    }
 }
