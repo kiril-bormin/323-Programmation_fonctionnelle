@@ -1,0 +1,1 @@
+généralement je comprend les concepts, mais j'ai peu de pratique et ça me pose un problème pour écrire le code sans regarder d'exemple 
