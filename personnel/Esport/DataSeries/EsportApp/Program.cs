@@ -10,15 +10,27 @@ public class Program()
         DataSeries<DataPoint<LolMatch>> lolMatches; 
         DataSeries<DataPoint<Cs2Match>> cs2Matches;
 
-
-
         var valorant = DataSeries<ValorantMatch>.FromCsv("C:\\Users\\px20umf\\Documents\\github\\323-Programmation_fonctionnelle\\personnel\\Esport\\DataSeries\\DataSeries\\data\\valorant.csv", ParseValorant);
         var lol = DataSeries<LolMatch>.FromCsv("C:\\Users\\px20umf\\Documents\\github\\323-Programmation_fonctionnelle\\personnel\\Esport\\DataSeries\\DataSeries\\data\\lol.csv", ParseLol);
         var cs2 = DataSeries<Cs2Match>.FromCsv("C:\\Users\\px20umf\\Documents\\github\\323-Programmation_fonctionnelle\\personnel\\Esport\\DataSeries\\DataSeries\\data\\cs2.csv", ParseCs2);
 
+        var raphGenerated = MatchGenerator.GenerateCs2("Raphaël", 20);
+
+        Console.WriteLine($"Raphaël : {raphGenerated.Values.Count()}");
+
+        Func<Cs2Match, bool> isValid = m =>
+            m.Kills + m.Assists <= 50 &&
+            m.Deaths >= 1;
+
+        var raphaelValid = raphGenerated.Values.Where(isValid).ToList();
+
+        Console.WriteLine($"Avant : {raphGenerated.Values.Count()}, après : {raphaelValid.Count}");
+
+
         Console.WriteLine($"Valorant : {valorant.Values.Count()}");
         Console.WriteLine($"League of Legends : {lol.Values.Count()}");
         Console.WriteLine($"CS2 : {cs2.Values.Count()}");
+
 
     }
 
