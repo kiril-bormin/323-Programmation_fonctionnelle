@@ -7,7 +7,7 @@ public class Program()
 {
     static void Main(string[] args)
     {
-
+        // Imports
         DataSeries<DataPoint<ValorantMatch>> valorantMatches;
         DataSeries<DataPoint<LolMatch>> lolMatches;
         DataSeries<DataPoint<Cs2Match>> cs2Matches;
@@ -22,6 +22,8 @@ public class Program()
 
         Console.WriteLine($"Raphaël : {raphGenerated.Values.Count()}");
 
+        // Filtres/Valider
+
         Func<Cs2Match, bool> isValid = m =>
             m.Kills + m.Assists <= 50 &&
             m.Deaths >= 1;
@@ -29,7 +31,11 @@ public class Program()
         var raphaelValid = DataSeries<Cs2Match>.From(
             raphGenerated.Values.Where(isValid)
         );
+        var baaad = valorant.Outliers(m => m.Kills < 0);
+        Console.WriteLine(valorant.Values.Count()); // 25 — inchangé
+        Console.WriteLine(baaad.Values.Count());     // sous-ensemble
 
+        // Interface CLI 
         if (args.Contains("--help"))
         {
             Console.WriteLine("this is help");
@@ -49,7 +55,7 @@ public class Program()
                 ExportCs2(DataSeries<Cs2Match>.From(series.Values.Where(isValid)), $"{player.ToLower()}_generated.csv");
                 Console.WriteLine($"{player} données générées et exportées");
             }
-            return;
+            return;     
         }
 
         Console.WriteLine($"Avant : {raphGenerated.Values.Count()}, après : {raphaelValid.Values.Count()}");
@@ -63,7 +69,11 @@ public class Program()
         ExportCs2(kiaraGenerated, "kiara_generated.csv");
 
         Console.WriteLine(Path.GetFullPath("raphael_generated.csv"));
+
+
+
     }
+    // Parsers
     static ValorantMatch ParseValorant(string[] cols) => new ValorantMatch(
         DateTime.Parse(cols[0]), // Timestamp
         cols[1],                 // player
@@ -100,6 +110,7 @@ public class Program()
         bool.Parse(cols[9])      // won
     );
 
+    // Exports
     static void ExportCs2(DataSeries<Cs2Match> matches, string path)
     {
         var header = "date,player,map,start_side,kills,deaths,assists,mvps,won";

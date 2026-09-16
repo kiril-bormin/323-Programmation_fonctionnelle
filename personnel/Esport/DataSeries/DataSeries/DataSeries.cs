@@ -23,5 +23,7 @@ namespace DataSeries
             var items = lines.Select(line => parser(line.Split(',')));
             return new DataSeries<T>(items);
         }
+        public DataSeries<T> Outliers(Func<T, bool> predicate)
+                    => DataSeries<T>.From(_data.Where(predicate));
     }
 }
