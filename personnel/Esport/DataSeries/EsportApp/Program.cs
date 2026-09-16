@@ -37,20 +37,20 @@ public class Program()
         Console.WriteLine(baaad.Values.Count());     // sous-ensemble
 
         // Valorant : kills plausibles pour un match compétitif
-        valorant = valorant.Sanitize(m =>
+        valorant.Sanitize(m =>
             m.Kills < 0 || m.Kills > 50 ||
             m.Deaths < 0 || m.Deaths > 30 ||
             m.Assists < 0
         );
 
         // CS2 : contraintes similaires
-        cs2 = cs2.Sanitize(m =>
+        cs2.Sanitize(m =>
             m.Kills + m.Assists > 50 ||
             m.Deaths < 0
         );
 
         // LoL : le support a structurellement peu de kills
-        lol = lol.Sanitize(m =>
+        lol.Sanitize(m =>
             m.Kills > 10 ||
             m.Deaths < 1 ||
             m.Assists < 0 ||

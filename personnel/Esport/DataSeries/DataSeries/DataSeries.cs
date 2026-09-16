@@ -7,7 +7,7 @@ namespace DataSeries
 {
     public class DataSeries<T>
     {
-        private readonly IEnumerable<T> _data;
+        private IEnumerable<T> _data;
 
         private DataSeries(IEnumerable<T> data) => _data = data;
         public static DataSeries<T> From(IEnumerable<DataPoint<T>> source)
@@ -29,7 +29,9 @@ namespace DataSeries
                 _data.Where(predicate)
             );
         }
-        public DataSeries<T> Sanitize(Func<T, bool> isOutlier)
-            => DataSeries<T>.From(_data.Where(x => !isOutlier(x)));
+        public void Sanitize(Func<T, bool> isOutlier)
+        {
+            _data = _data.Where(x => !isOutlier(x)).ToList();
+        }
     }
 }
