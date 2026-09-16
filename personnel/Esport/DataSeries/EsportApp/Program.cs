@@ -31,9 +31,32 @@ public class Program()
         var raphaelValid = DataSeries<Cs2Match>.From(
             raphGenerated.Values.Where(isValid)
         );
+
         var baaad = valorant.Outliers(m => m.Kills < 0);
         Console.WriteLine(valorant.Values.Count()); // 25 — inchangé
         Console.WriteLine(baaad.Values.Count());     // sous-ensemble
+
+        // Valorant : kills plausibles pour un match compétitif
+        valorant = valorant.Sanitize(m =>
+            m.Kills < 0 || m.Kills > 50 ||
+            m.Deaths < 0 || m.Deaths > 30 ||
+            m.Assists < 0
+        );
+
+        // CS2 : contraintes similaires
+        cs2 = cs2.Sanitize(m =>
+            m.Kills + m.Assists > 50 ||
+            m.Deaths < 0
+        );
+
+        // LoL : le support a structurellement peu de kills
+        lol = lol.Sanitize(m =>
+            m.Kills > 10 ||
+            m.Deaths < 1 ||
+            m.Assists < 0 ||
+            m.Cs < 0
+        );
+
 
         // Interface CLI 
         if (args.Contains("--help"))

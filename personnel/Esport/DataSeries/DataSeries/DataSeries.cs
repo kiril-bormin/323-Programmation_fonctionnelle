@@ -24,6 +24,12 @@ namespace DataSeries
             return new DataSeries<T>(items);
         }
         public DataSeries<T> Outliers(Func<T, bool> predicate)
-                    => DataSeries<T>.From(_data.Where(predicate));
+        {
+            return DataSeries<T>.From(
+                _data.Where(predicate)
+            );
+        }
+        public DataSeries<T> Sanitize(Func<T, bool> isOutlier)
+            => DataSeries<T>.From(_data.Where(x => !isOutlier(x)));
     }
 }
