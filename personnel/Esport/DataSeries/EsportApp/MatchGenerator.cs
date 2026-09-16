@@ -18,7 +18,8 @@ namespace EsportApp
 
             return DataSeries<Cs2Match>.From(
                 Enumerable.Range(1, count)
-                    .Select(i => new DataPoint<Cs2Match>(start.AddDays(i), new Cs2Match(
+                    .Select(i => new Cs2Match(
+                        start.AddDays(i), // Timestamp
                         player,
                         maps[rng.Next(maps.Length)],
                         sides[rng.Next(2)],
@@ -26,10 +27,9 @@ namespace EsportApp
                         rng.Next(6, 18),
                         rng.Next(0, 8),
                         rng.Next(0, 5),
-                        rng.Next(2) == 0
-                )
-            ))
-         );
+                        rng.Next(2) == 0  // won
+                    ))
+            );
         }
     }
 }

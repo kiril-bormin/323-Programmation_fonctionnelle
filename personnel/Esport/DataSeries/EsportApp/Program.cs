@@ -28,7 +28,7 @@ public class Program()
             m.Deaths >= 1;
 
         var raphaelValid = DataSeries<Cs2Match>.From(
-            raphGenerated.DataPoints.Where(dp => isValid(dp.Value))
+            raphGenerated.Values.Where(isValid)
         );
 
         Console.WriteLine($"Avant : {raphGenerated.Values.Count()}, après : {raphaelValid.Values.Count()}");
@@ -44,44 +44,47 @@ public class Program()
         Console.WriteLine(Path.GetFullPath("raphael_generated.csv"));
     }
     static ValorantMatch ParseValorant(string[] cols) => new ValorantMatch(
-        cols[1],              // player
-        cols[2],              // agent
-        int.Parse(cols[3]),   // kills
-        int.Parse(cols[4]),   // deaths
-        int.Parse(cols[5]),   // assists
-        int.Parse(cols[6]),   // headshots
-        int.Parse(cols[7]),   // roundsWon
-        bool.Parse(cols[8])   // won
+        DateTime.Parse(cols[0]), // Timestamp
+        cols[1],                 // player
+        cols[2],                 // agent
+        int.Parse(cols[3]),      // kills
+        int.Parse(cols[4]),      // deaths
+        int.Parse(cols[5]),      // assists
+        int.Parse(cols[6]),      // headshots
+        int.Parse(cols[7]),      // roundsWon
+        bool.Parse(cols[8])      // won
     );
 
     static Cs2Match ParseCs2(string[] cols) => new Cs2Match(
-        cols[1],              // player
-        cols[2],              // map
-        cols[3],              // startSide (côté joué en 1re mi-temps — CT ou T)
-        int.Parse(cols[4]),   // kills
-        int.Parse(cols[5]),   // deaths
-        int.Parse(cols[6]),   // assists
-        int.Parse(cols[7]),   // mvps
-        bool.Parse(cols[8])   // won
+        DateTime.Parse(cols[0]), // Timestamp
+        cols[1],                 // player
+        cols[2],                 // map
+        cols[3],                 // startSide
+        int.Parse(cols[4]),      // kills
+        int.Parse(cols[5]),      // deaths
+        int.Parse(cols[6]),      // assists
+        int.Parse(cols[7]),      // mvps
+        bool.Parse(cols[8])      // won
     );
 
     static LolMatch ParseLol(string[] cols) => new LolMatch(
-        cols[1],              // player
-        cols[2],              // champion
-        int.Parse(cols[4]),   // kills
-        int.Parse(cols[5]),   // deaths
-        int.Parse(cols[6]),   // assists
-        int.Parse(cols[7]),   // cs
-        int.Parse(cols[8]),   // visionScore
-        bool.Parse(cols[9])   // won
+        DateTime.Parse(cols[0]), // Timestamp
+        cols[1],                 // player
+        cols[2],                 // champion
+        int.Parse(cols[4]),      // kills
+        int.Parse(cols[5]),      // deaths
+        int.Parse(cols[6]),      // assists
+        int.Parse(cols[7]),      // cs
+        int.Parse(cols[8]),      // visionScore
+        bool.Parse(cols[9])      // won
     );
 
     static void ExportCs2(DataSeries<Cs2Match> matches, string path)
     {
         var header = "date,player,map,start_side,kills,deaths,assists,mvps,won";
-        var lines = matches.DataPoints.Select(dp =>
-            $"{dp.Timestamp:yyyy-MM-dd},{dp.Value.Player},{dp.Value.Map},{dp.Value.StartSide}," +
-            $"{dp.Value.Kills},{dp.Value.Deaths},{dp.Value.Assists},{dp.Value.Mvps},{dp.Value.Won.ToString().ToLower()}"
+        var lines = matches.Values.Select(m =>
+            $"{DateTime.Today:yyyy-MM-dd},{m.Player},{m.Map},{m.StartSide}," +
+            $"{m.Kills},{m.Deaths},{m.Assists},{m.Mvps},{m.Won.ToString().ToLower()}"
         );
         File.WriteAllLines(path, lines.Prepend(header));
     }
