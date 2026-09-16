@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "EsportApp": {
+      "commandName": "Project",
+      "commandLineArgs": "--help\r\n--generate all"
+    }
+  }
+}

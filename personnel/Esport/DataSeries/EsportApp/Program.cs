@@ -5,7 +5,7 @@ using System.Linq;
 
 public class Program()
 {
-    static void Main()
+    static void Main(string[] args)
     {
 
         DataSeries<DataPoint<ValorantMatch>> valorantMatches;
@@ -20,7 +20,6 @@ public class Program()
         var noeGenerated = MatchGenerator.GenerateCs2("Noé", 20);
         var kiaraGenerated = MatchGenerator.GenerateCs2("Kiara", 20);
 
-
         Console.WriteLine($"Raphaël : {raphGenerated.Values.Count()}");
 
         Func<Cs2Match, bool> isValid = m =>
@@ -30,6 +29,28 @@ public class Program()
         var raphaelValid = DataSeries<Cs2Match>.From(
             raphGenerated.Values.Where(isValid)
         );
+
+        if (args.Contains("--help"))
+        {
+            Console.WriteLine("this is help");
+        }
+
+        if (args.Contains("--generate"))
+        {
+            var target = args[Array.IndexOf(args, "--generate") + 1];
+
+            var players = target == "all"
+                ? new[] { "Raphaël", "Kiara", "Dylan", "Noé" }
+                : new[] { target };
+
+            foreach (var player in players)
+            {
+                var series = MatchGenerator.GenerateCs2(player, 20);
+                ExportCs2(DataSeries<Cs2Match>.From(series.Values.Where(isValid)), $"{player.ToLower()}_generated.csv");
+                Console.WriteLine($"{player} données générées et exportées");
+            }
+            return;
+        }
 
         Console.WriteLine($"Avant : {raphGenerated.Values.Count()}, après : {raphaelValid.Values.Count()}");
 

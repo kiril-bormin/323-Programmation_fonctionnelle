@@ -19,7 +19,7 @@ namespace EsportApp
             return DataSeries<Cs2Match>.From(
                 Enumerable.Range(1, count)
                     .Select(i => new Cs2Match(
-                        start.AddDays(i), // Timestamp
+                        start.AddDays(i), 
                         player,
                         maps[rng.Next(maps.Length)],
                         sides[rng.Next(2)],
