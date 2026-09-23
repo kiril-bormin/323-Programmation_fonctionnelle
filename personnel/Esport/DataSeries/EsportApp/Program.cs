@@ -1,7 +1,9 @@
 ﻿using DataSeries;
 using EsportApp;
-using System.Runtime.Intrinsics.Arm;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Runtime.Intrinsics.Arm;
+using System.Text.RegularExpressions;
 
 public class Program()
 {
@@ -61,7 +63,8 @@ public class Program()
         // Interface CLI 
         if (args.Contains("--help"))
         {
-            Console.WriteLine("this is help");
+            Console.WriteLine("utiliser --extract min|max|avg|mme");
+            Console.WriteLine("Exemple d'utilisation : --extract min --game cs2 --player Raphaël");
         }
 
         if (args.Contains("--generate"))
@@ -78,8 +81,80 @@ public class Program()
                 ExportCs2(DataSeries<Cs2Match>.From(series.Values.Where(isValid)), $"{player.ToLower()}_generated.csv");
                 Console.WriteLine($"{player} données générées et exportées");
             }
-            return;     
+            return;
         }
+
+        // Afficher les matches d'un joueur en précisant ou pas le jeu.
+        if (args.Contains("--player"))
+        {
+            var targetPlayer = args[Array.IndexOf(args, "--player") + 1];
+
+            if (args.Contains("--game"))
+            {
+                var targetGame = args[Array.IndexOf(args, "--game") + 1];
+
+                if (targetGame == "valorant")
+                {
+                    var ValorantMatches = ShowValorantMatches(valorant, targetPlayer);
+                    foreach (var match in ValorantMatches)
+                    {
+                        Console.WriteLine($"{match.Timestamp}, {match.Kills}, {match.Deaths}, {match.Assists}, {match.Won}");
+                    }
+                }
+                else if (targetGame == "cs2")
+                {
+                    var Cs2Matches = ShowCs2Matches(cs2, targetPlayer);
+                    foreach (var match in Cs2Matches)
+                    {
+                        Console.WriteLine($"{match.Timestamp}, {match.Kills}, {match.Deaths}, {match.Assists}, {match.Won}");
+                    }
+                }
+                else if (targetGame == "lol")
+                {
+                    var LolMatches = ShowLolMatches(lol, targetPlayer);
+                    foreach (var match in LolMatches)
+                    {
+                        Console.WriteLine($"{match.Timestamp}, {match.Kills}, {match.Deaths}, {match.Assists}, {match.Won}");
+                    }
+                }
+
+            }
+            else
+            {
+                var ValorantMatches = ShowValorantMatches(valorant, targetPlayer);
+                foreach (var match in ValorantMatches)
+                {
+                    Console.WriteLine($"{match.Timestamp}, {match.Kills}, {match.Deaths}, {match.Assists}, {match.Won}");
+                }
+                var Cs2Matches = ShowCs2Matches(cs2, targetPlayer);
+                foreach (var match in Cs2Matches)
+                {
+                    Console.WriteLine($"{match.Timestamp}, {match.Kills}, {match.Deaths}, {match.Assists}, {match.Won}");
+                }
+                var LolMatches = ShowLolMatches(lol, targetPlayer);
+                foreach (var match in LolMatches)
+                {
+                    Console.WriteLine($"{match.Timestamp}, {match.Kills}, {match.Deaths}, {match.Assists}, {match.Won}");
+                }
+            }
+
+        }
+
+        // Exercice 5.1 WIP
+        //if (args.Contains("--extract"))
+        //{
+        //    var targetOperation = args[Array.IndexOf(args, "--extract") + 1];
+
+        //    if (args.Contains("--game"))
+        //    {
+        //        var targetGame = args[Array.IndexOf(args, "--game") + 1];
+        //    }
+        //    if (args.Contains("--player"))
+        //    {
+        //        var targetPlayer = args[Array.IndexOf(args, "--player") + 1];
+        //    }
+
+        //}
 
         Console.WriteLine($"Avant : {raphGenerated.Values.Count()}, après : {raphaelValid.Values.Count()}");
 
@@ -93,9 +168,32 @@ public class Program()
 
         Console.WriteLine(Path.GetFullPath("raphael_generated.csv"));
 
+        var RaphaelMatches = ShowValorantMatches(valorant, "Raphaël");
 
+        Console.WriteLine(RaphaelMatches);
 
     }
+    // Show matches
+
+    static List<ValorantMatch> ShowValorantMatches(DataSeries<ValorantMatch> game, string player)
+    {
+        var playerMatches = game.Values.Where(m => m.Player == player).ToList();
+
+        return playerMatches;
+    }
+    static List<Cs2Match> ShowCs2Matches(DataSeries<Cs2Match> game, string player)
+    {
+        var playerMatches = game.Values.Where(m => m.Player == player).ToList();
+
+        return playerMatches;
+    }
+    static List<LolMatch> ShowLolMatches(DataSeries<LolMatch> game, string player)
+    {
+        var playerMatches = game.Values.Where(m => m.Player == player).ToList();
+
+        return playerMatches;
+    }
+
     // Parsers
     static ValorantMatch ParseValorant(string[] cols) => new ValorantMatch(
         DateTime.Parse(cols[0]), // Timestamp
